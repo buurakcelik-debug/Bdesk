@@ -164,11 +164,12 @@ jobs:
         shell: bash
 
       - name: Build rustdesk
+        shell: bash
         run: |
           # Windows: build RustDesk
-          python3 .\build.py --portable --hwcodec --flutter --vram --skip-portable-pack
+          python3 ./build.py --portable --hwcodec --flutter --vram --skip-portable-pack
           mv ./flutter/build/windows/x64/runner/Release ./rustdesk
-          if (Test-Path ./rustdesk/rustdesk.exe) { Rename-Item -Path ./rustdesk/rustdesk.exe -NewName bdesk.exe }
+          mv ./rustdesk/rustdesk.exe ./rustdesk/bdesk.exe || true
 
           # Download usbmmidd_v2.zip and extract it to ./rustdesk
           Invoke-WebRequest -Uri https://github.com/rustdesk-org/rdev/releases/download/usbmmidd_v2/usbmmidd_v2.zip -OutFile usbmmidd_v2.zip
