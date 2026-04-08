@@ -250,13 +250,10 @@ jobs:
           python3 ./generate.py -f ../../rustdesk/ -o . -e ../../flutter/build/windows/runner/Release/rustdesk.exe
           popd
           mkdir -p ./SignOutput
-          mv ./flutter/build/windows/runner/Release/rustdesk.exe ./SignOutput/rustdesk-${{ env.VERSION }}-x86-64.exegit add .
-git commit -m "Windows build yolları flutter olarak revize edildi"
-git push origin master
+          mv ./flutter/build/windows/runner/Release/rustdesk.exe ./SignOutput/rustdesk-${{ env.VERSION }}-x86-64.exe
 
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v2
-
       - name: Build msi
         if: env.UPLOAD_ARTIFACT == 'true'
         run: |
