@@ -1,11 +1,11 @@
 [package]
 name = "bdesk"
 version = "1.4.6"
-authors = ["rustdesk <info@rustdesk.com>"]
+authors = ["BCSistem <info@bcsistem.com>"]
 edition = "2021"
 build= "build.rs"
-description = "RustDesk Remote Desktop"
-default-run = "rustdesk"
+description = "Bdesk Remote Desktop"
+default-run = "bdesk"
 rust-version = "1.75"
 
 [lib]
