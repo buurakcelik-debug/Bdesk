@@ -249,10 +249,11 @@ jobs:
         uses: microsoft/setup-msbuild@v2
       - name: Build msi
         if: env.UPLOAD_ARTIFACT == 'true'
+        shell: bash
         run: |
           pushd ./res/msi
-          (Get-Content Product.wxs) -replace 'rustdesk.exe', 'bdesk.exe' | Set-Content Product.wxs
-          python preprocess.py --arp -d ../../rustdesk
+          sed -i 's/rustdesk.exe/bdesk.exe/g' Product.wxs
+          python3 preprocess.py --arp -d ../../rustdesk
           nuget restore msi.sln
           msbuild msi.sln -p:Configuration=Release -p:Platform=x64 /p:TargetVersion=Windows10
           mv ./Package/bin/x64/Release/en-us/Package.msi ../../SignOutput/bdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.msi
