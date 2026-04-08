@@ -167,12 +167,14 @@ jobs:
         shell: bash
         run: |
           # Windows: build RustDesk
-          python3 ./build.py --portable --hwcodec --flutter --vram --skip-portable-pack          
+          python3 ./build.py --portable --hwcodec --flutter --vram --skip-portable-pack
+          
           # Dizin kaymasını önlemek için içeriği kopyalıyoruz
           mkdir -p ./rustdesk
-          cp -r ./flutter/build/windows/x64/runner/Release/* ./rustdesk/
+          cp -r ./flutter/build/windows/x64/runner/Release/* ./rustdesk/ || true
+          cp -r ./flutter/build/windows/runner/Release/* ./rustdesk/ || true
           
-          # Exe adını değiştir
+          # Exe adını garanti altına al
           if [ -f "./rustdesk/rustdesk.exe" ]; then
             mv ./rustdesk/rustdesk.exe ./rustdesk/bdesk.exe
           fi
@@ -234,20 +236,20 @@ jobs:
 
       - name: Build self-extracted executable
         shell: bash
-        if: env.UPLOAD_ARTIFACT == 'true'
         run: |
           sed -i '/dpiAware/d' res/manifest.xml
           pushd ./libs/portable
           pip3 install -r requirements.txt
-          python3 ./generate.py -f ../../rustdesk/ -o . -e ../../rustdesk/bdesk.exe
+          python3 ./generate.py -f ../../Release/ -o . -e ../../Release/bdesk.exe
           popd
           mkdir -p ./SignOutput
-          mv ./target/release/rustdesk-portable-packer.exe ./SignOutput/bdesk-${{ env.VERSION }}-x86-64.exe
+          mv ./target/release/*-portable-packer.exe ./SignOutput/bdesk-${{ env.VERSION }}-${{ matrix.job.arch }}-sciter.exe || true
 
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v2
       - name: Build msi
         if: env.UPLOAD_ARTIFACT == 'true'
+        shell: bash
         run: |
           pushd ./res/msi
           (Get-Content Product.wxs) -replace 'rustdesk.exe', 'bdesk.exe' | Set-Content Product.wxs
@@ -357,10 +359,10 @@ jobs:
           sed -i 's/branch = "dyn"/branch = "dyn_x86"/g' ./Cargo.toml
           cargo build --features inline,vram,hwcodec --release --bins
           mkdir -p ./Release
-          cp ./target/release/rustdesk.exe ./Release/bdesk.exe
+          cp ./target/release/*desk.exe ./Release/bdesk.exe || true
           curl -LJ -o ./Release/sciter.dll https://github.com/c-smile/sciter-sdk/raw/master/bin.win/x32/sciter.dll
           curl -LJ -o ./usbmmidd_v2.zip https://github.com/rustdesk-org/rdev/releases/download/usbmmidd_v2/usbmmidd_v2.zip
-          unzip usbmmidd_v2.zip
+          unzip -o usbmmidd_v2.zip
           # Do not remove x64 files, because the user may run the 32bit version on a 64bit system.
           # Do not remove ./usbmmidd_v2/deviceinstaller64.exe, as x86 exe cannot install and uninstall drivers when running on x64,
           # we need the x64 exe to install and uninstall the driver.
