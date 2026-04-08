@@ -174,25 +174,25 @@ jobs:
           cp -r ./flutter/build/windows/x64/runner/Release/* ./rustdesk/ || true
           cp -r ./flutter/build/windows/runner/Release/* ./rustdesk/ || true
           
-          # Exe adını garanti altına al
+          # Exe adını değiştir
           if [ -f "./rustdesk/rustdesk.exe" ]; then
             mv ./rustdesk/rustdesk.exe ./rustdesk/bdesk.exe
           fi
 
-          # Sürücüleri indir ve çıkart
+          # Sürücüleri indir ve çıkart (Dizin bozulmasın diye -d kaldırıldı)
           curl -LJ -o usbmmidd_v2.zip https://github.com/rustdesk-org/rdev/releases/download/usbmmidd_v2/usbmmidd_v2.zip
-          unzip -o usbmmidd_v2.zip -d ./usbmmidd_v2
+          unzip -o usbmmidd_v2.zip
           rm -rf ./usbmmidd_v2/Win32
           rm -f ./usbmmidd_v2/deviceinstaller64.exe ./usbmmidd_v2/deviceinstaller.exe ./usbmmidd_v2/usbmmidd.bat
-          cp -r ./usbmmidd_v2/* ./rustdesk/
+          cp -r ./usbmmidd_v2 ./rustdesk/
 
           # Yazıcı sürücülerini indir
           curl -LJ -o rustdesk_printer_driver.zip https://github.com/rustdesk/hbb_common/releases/download/driver/rustdesk_printer_driver_v4-1.4.zip || true
           curl -LJ -o printer_driver_adapter.zip https://github.com/rustdesk/hbb_common/releases/download/driver/printer_driver_adapter.zip || true
           
-          unzip -o rustdesk_printer_driver.zip -d ./rustdesk_printer_driver || true
-          mkdir -p ./rustdesk/drivers/RustDeskPrinterDriver
-          cp -r ./rustdesk_printer_driver/* ./rustdesk/drivers/RustDeskPrinterDriver/ || true
+          unzip -o rustdesk_printer_driver.zip || true
+          mkdir -p ./rustdesk/drivers
+          cp -r ./rustdesk_printer_driver_v4-1.4 ./rustdesk/drivers/RustDeskPrinterDriver || true
           
           unzip -o printer_driver_adapter.zip || true
           cp printer_driver_adapter.dll ./rustdesk/ || true
@@ -249,7 +249,6 @@ jobs:
         uses: microsoft/setup-msbuild@v2
       - name: Build msi
         if: env.UPLOAD_ARTIFACT == 'true'
-        shell: bash
         run: |
           pushd ./res/msi
           (Get-Content Product.wxs) -replace 'rustdesk.exe', 'bdesk.exe' | Set-Content Product.wxs
