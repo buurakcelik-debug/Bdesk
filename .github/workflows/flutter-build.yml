@@ -255,7 +255,7 @@ jobs:
           sed -i 's/rustdesk.exe/bdesk.exe/g' Product.wxs
           python3 preprocess.py --arp -d ../../rustdesk
           nuget restore msi.sln
-          msbuild msi.sln -p:Configuration=Release -p:Platform=x64 /p:TargetVersion=Windows10
+          msbuild msi.sln -p:Configuration=Release -p:Platform=x64 -p:TargetVersion=Windows10
           mv ./Package/bin/x64/Release/en-us/Package.msi ../../SignOutput/bdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.msi
           sha256sum ../../SignOutput/bdesk-*.msi
 
