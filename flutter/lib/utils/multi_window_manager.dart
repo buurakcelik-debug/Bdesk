@@ -578,4 +578,4 @@ class RustDeskMultiWindowManager {
   }
 }
 
-final rustDeskWinManager = RustDeskMultiWindowManager.instance;
+final bDeskWinManager = RustDeskMultiWindowManager.instance
